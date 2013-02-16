@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+    <head>
+        <title>Hello World</title>
+        <script type="text/javascript" src="AIRAliases.js"></script>
+        <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+        <script type="text/javascript">
+
+            
+
+
+            function appLoad(){
+                air.trace("Hello World");
+                //чтение текстового файла
+                var textFile = new air.File("app:/textfile.txt");
+                if(textFile.exists){
+                    var textStream = new air.FileStream();
+                    textStream.open(textFile, air.FileMode.READ);
+                    if(textStream.bytesAvailable > 0){
+                        var fileText = textStream.readUTFBytes(textStream.bytesAvailable);
+                        textStream.close();
+                        air.trace("Text read: " + fileText);
+
+                        //создаем 'p' элемент для текста
+                        var displayDiv = document.getElementById('display');
+                        var paragraph = document.createElement('p');
+                        var textNode = document.createTextNode(fileText);
+                        paragraph.appendChild(textNode);
+                        displayDiv.appendChild(paragraph);
+                    } else {
+                        air.trace("Файл пустой.");
+                    } 
+                } else {
+                    air.trace("Файл не найден.");
+                }
+            } 
+
+
+            function isUserHere(){
+                air.NativeApplication.nativeApplication.idleThreshold = 5; 
+                air.NativeApplication.nativeApplication.addEventListener(air.Event.USER_IDLE, function(event) { 
+                    air.trace("Idle"); 
+                    $('.present').html('away');
+                }); 
+                air.NativeApplication.nativeApplication.addEventListener(air.Event.USER_PRESENT, function(event) { 
+                    air.trace("Present"); 
+                    $('.present').html('here');
+                });
+            }
+
+            function checkSandbox(){
+                if (window.runtime) 
+                    { 
+                    if (air.Security.sandboxType == air.Security.APPLICATION) 
+                        {  
+                        alert("In AIR application security sandbox."); 
+                    } 
+                    else 
+                        { 
+                        alert("Not in AIR application security sandbox.") 
+                    } 
+                } 
+                else 
+                    { 
+                    alert("Not in the Adobe AIR runtime.") 
+                }
+            }
+
+
+            $(function(){
+                //$('body').fadeOut(10000);      
+
+
+                
+                //isUserHere();
+
+
+                $('.present').click(function(){
+                    //isUserHere();
+                    $(this).fadeOut(300).fadeIn(100);
+                    newWindow = window.open("xmpl.html", "logWindow"+Math.random(1,5), "height=600, width=400, top=10, left=10");
+                });
+
+
+
+                appLoad();
+
+
+
+
+            });
+
+        </script>
+    </head>
+    <body>
+        <h1>Hello World</h1>
+        <p>Текст:</p>
+        <textarea cols="5" rows="5">TEST</textarea>
+        <p>Текст:</p>
+        <div id="display"></div>
+        <div class="present">not loaded</div>
+
+    </body>
+</html>
